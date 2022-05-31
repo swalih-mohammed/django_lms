@@ -49,29 +49,6 @@ const LoginScreen = (props) => {
     }
   };
 
-  const login = async (email, pass) => {
-    setLoading(true);
-    console.log("loggin in", loading);
-    try {
-      await props.onAuth(email, pass);
-      if (props.token) {
-        setLoading(false);
-        navigation.navigate("Home");
-      }
-      if (props.error) {
-        console.log("error in login", error);
-        setError(true);
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
-    } catch (error) {
-      setError(true);
-      setLoading(false);
-      console.log(error);
-    }
-  };
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />

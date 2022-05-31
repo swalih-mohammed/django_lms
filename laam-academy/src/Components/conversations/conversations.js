@@ -22,6 +22,7 @@ import Animated, {
 import MessageItem from "./messageItem";
 import SessionCompleteModal from "./sessionComplete";
 import CompleteAudio from "../../Helpers/PlayerWithoutControl";
+import ReportBug from "../Utils/reportBug";
 
 const ConversationDetail = (props) => {
   const sound = React.useRef(new Audio.Sound());
@@ -152,7 +153,7 @@ const ConversationDetail = (props) => {
             { shouldPlay: true },
             true
           );
-          setIsplaying(true);
+          if (isMounted.current) setIsplaying(true);
           if (result.isLoaded === false) {
             return console.log("Error in Loading Audio");
           }
@@ -435,6 +436,7 @@ const ConversationDetail = (props) => {
 
   return (
     <View style={{ flex: 1 }}>
+      <ReportBug unit={props.unit} conversation={props.convId} />
       <View
         style={{
           flex: 1,

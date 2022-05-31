@@ -13,14 +13,19 @@ import { useNavigation } from "@react-navigation/native";
 import * as authActions from "../store/actions/auth";
 import * as courseListActions from "../store/actions/courseList";
 import * as userActions from "../store/actions/user";
-
+import Animated, {
+  LightSpeedInRight,
+  SlideInRight,
+} from "react-native-reanimated";
 import { COLORS, SIZES } from "../Helpers/constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import TestList from "../Components/tests/list";
+import ReportBug from "../Components/Utils/reportBug";
 
 const Account = (props) => {
   const navigation = useNavigation();
+  // console.log(props.current_level);
 
   React.useEffect(() => {
     pushToHome();
@@ -43,7 +48,12 @@ const Account = (props) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
-        <View style={{ flex: 1, paddingHorizontal: 25, paddingVertical: 20 }}>
+        <Animated.View
+          // entering={LightSpeedInRight}
+          // exiting={SlideOutRight.duration(500)}
+          entering={SlideInRight.duration(500)}
+          style={{ flex: 1, paddingHorizontal: 25, paddingVertical: 20 }}
+        >
           <Title style={{ paddingTop: 20, fontWeight: "bold" }}>
             Your Account Details
           </Title>
@@ -146,9 +156,18 @@ const Account = (props) => {
             </TouchableOpacity>
           </View>
           <Divider />
+          <View style={styles.Row}>
+            <Paragraph>Level</Paragraph>
+
+            <Paragraph style={{ paddingRight: 10 }}>
+              {props.current_level}
+            </Paragraph>
+          </View>
 
           <View style={styles.Row}>
-            <Paragraph>Courses</Paragraph>
+            <Paragraph>Change Level</Paragraph>
+            {/* <Paragraph> {props.is_teacher ? "yes" : "no"}</Paragraph> */}
+
             <TouchableOpacity
               onPress={() => navigation.navigate("CourseLevelList")}
             >
@@ -173,6 +192,15 @@ const Account = (props) => {
             />
           </View>
           <Divider />
+          {props.is_teacher ? (
+            <>
+              <View style={styles.Row}>
+                <Paragraph>Report a problem</Paragraph>
+                <ReportBug />
+              </View>
+              <Divider />
+            </>
+          ) : null}
 
           <View style={styles.Row}>
             <Button
@@ -183,7 +211,7 @@ const Account = (props) => {
               Log out
             </Button>
           </View>
-        </View>
+        </Animated.View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -211,7 +239,9 @@ const mapStateToProps = (state) => {
     id: state.auth.id,
     email: state.auth.email,
     name: state.auth.name,
+    is_teacher: state.auth.is_teacher,
     current_course: state.user.user.current_course_language,
+    current_level: state.user.user.current_course_level,
     student_id: state.user.user.id,
     courseList: state.courseList.courseList,
   };

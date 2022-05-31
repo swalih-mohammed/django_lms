@@ -25,7 +25,7 @@ const CertificateScreen = (props) => {
           }}
         >
           <Image
-            style={{ height: "80%", width: 70, alignSelf: "center" }}
+            style={{ height: "60%", width: 70, alignSelf: "center" }}
             source={require("../../assets/logo_nobg.png")}
           />
         </View>
@@ -43,7 +43,7 @@ const CertificateScreen = (props) => {
               color: COLORS.primary,
             }}
           >
-            www.lakaters.com
+            www.laamacademy.com
           </Paragraph>
         </View>
         <View

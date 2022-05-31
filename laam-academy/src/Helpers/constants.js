@@ -16,15 +16,15 @@ export const COLORS = {
   completed: "#101fc4",
   enactive: "#a39e9e",
 
-  black: "#171717",
+  black: "#293241",
   white: "#f1faee",
   black: "000000",
   grey: "#495057",
-  background: "#252C4A"
+  background: "#252C4A",
 };
 
 export const SIZES = {
   base: 10,
   width,
-  height
+  height,
 };

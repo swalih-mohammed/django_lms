@@ -36,9 +36,9 @@ const GetStarted = (props) => {
       <View style={styles.TopContainer}>
         <Image
           style={styles.photo}
-          source={require("../../assets/logo_nobg.png")}
+          source={require("../../assets/logo1.png")}
         />
-        <Paragraph>Language Learning Made Easy</Paragraph>
+        {/* <Paragraph>Language Learning Made Easy</Paragraph> */}
       </View>
       <View style={styles.MiddleContainer}>
         <LottieView
@@ -92,9 +92,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   TopContainer: {
-    flex: 1.2,
-    justifyContent: "flex-end",
+    flex: 2,
+    justifyContent: "center",
     alignItems: "center",
+    // backgroundColor: "red",
   },
   MiddleContainer: {
     flex: 1,
@@ -112,8 +113,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
   },
   ImgWrapper: {
-    width: width * 0.8,
-    height: height * 0.4,
+    width: width * 0.7,
+    height: height * 0.5,
     justifyContent: "center",
     alignItems: "center",
   },

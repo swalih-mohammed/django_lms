@@ -21,7 +21,7 @@ const CourseFee = (props) => {
         paddingHorizontal: 5,
         paddingVertical: 3,
         borderRadius: 3,
-        width: 150,
+        // width: 150,
       }}
     >
       {props.is_active ? (
@@ -39,10 +39,10 @@ const CourseFee = (props) => {
   );
 };
 
-const UnitItem = (props) => {
+const CourseListItem = (props) => {
   const { item } = props;
   const navigation = useNavigation();
-  // console.log(props.student_id);
+  // console.log("course list item");
   const updateCurrentLevel = (level) => {
     props.updateCurrentCourse(
       props.user_id,
@@ -59,7 +59,7 @@ const UnitItem = (props) => {
       ? 0
       : item.completed_units / item.total_units;
   return (
-    <View style={{ flex: 1, flexDirection: "row", maxHeight: 140 }}>
+    <View style={{ flex: 1, flexDirection: "row", height: 140 }}>
       <View style={{ flex: 1.5 }}>
         <View style={{ flex: 1 }}>
           <View
@@ -75,7 +75,7 @@ const UnitItem = (props) => {
                 width: 30,
                 height: 30,
                 borderRadius: 30 / 2,
-                backgroundColor: "white",
+                backgroundColor: progress === 1 ? COLORS.primary : "white",
                 justifyContent: "center",
                 alignItems: "center",
                 marginRight: 10,
@@ -85,8 +85,8 @@ const UnitItem = (props) => {
               <MaterialCommunityIcons
                 name={progress === 1 ? "check" : "school"}
                 style={{
-                  color: COLORS.primary,
-                  fontSize: 30,
+                  color: progress === 1 ? "white" : COLORS.primary,
+                  fontSize: progress === 1 ? 20 : 30,
                 }}
               />
             </View>
@@ -196,15 +196,7 @@ const UnitItem = (props) => {
                 // left: 0,
               }}
             >
-              {/* <Paragraph
-                style={{
-                  color: "#ffffff",
-                  paddingRight: 8,
-                  borderRadius: 12,
-                }}
-              > */}
               {item.is_enrolled ? "Explore" : "Enroll"}
-              {/* </Paragraph> */}
             </Button>
           </View>
         </Card>
@@ -212,35 +204,6 @@ const UnitItem = (props) => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    // backgroundColor: "red",
-  },
-  RightContainer: {
-    flex: 2,
-    justifyContent: "center",
-    alignItems: "flex-start",
-    marginRight: 10,
-    marginLeft: 35,
-    // backgroundColor: "red",
-  },
-  LeftContainer: {
-    flex: 1,
-    justifyContent: "center",
-    // backgroundColor: "black",
-  },
-  photo: {
-    margin: 10,
-    borderRadius: 15,
-    width: 60,
-    height: 60,
-  },
-});
-
-// export default UnitItem;
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -261,4 +224,4 @@ const mapStateToProps = (state) => {
     error: state.courseList.error,
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(UnitItem);
+export default connect(mapStateToProps, mapDispatchToProps)(CourseListItem);

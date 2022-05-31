@@ -20,17 +20,24 @@ import * as Lessonactions from "../../store/actions/lesson";
 import LessonItem from "../lessons/item";
 import QuizItem from "../quiz/item";
 import ConversationItem from "../conversations/item";
+import ReportBug from "../Utils/reportBug";
 
 const UnitDetail = (props) => {
   const { unit, loading, error } = props;
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
 
   useEffect(() => {
-    console.log("unit id in params", props.route.params.id);
-    props.getUnit(props.route.params.id, props.user_id);
-
+    // console.log("is teacher", props.is_teacher);
+    // console.log("unit id in params", props.route.params.id);
+    getUnitDetails();
     return () => {};
   }, []);
+
+  const getUnitDetails = () => {
+    const unit_id = props.route.params.id ? props.route.params.id : 1;
+    const user_id = props.user_id;
+    props.getUnit(unit_id, user_id);
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,6 +47,7 @@ const UnitDetail = (props) => {
       return () => {};
     }, [])
   );
+
   const progressBar = () => {
     if (unit) {
       const lesson_len = unit.lessons.length;
@@ -86,6 +94,8 @@ const UnitDetail = (props) => {
       ) : (
         <>
           <ScrollView>
+            {props.is_teacher && unit && <ReportBug unit={unit.id} />}
+
             {unit && (
               <Animated.View entering={LightSpeedInRight}>
                 <Card
@@ -146,7 +156,6 @@ const UnitDetail = (props) => {
                 </Card>
               </Animated.View>
             )}
-
             <View>
               {unit &&
                 unit.lessons?.length > 0 &&
@@ -199,6 +208,7 @@ const mapStateToProps = (state) => {
     token: state.auth.token,
     user_id: state.auth.id,
     username: state.auth.username,
+    is_teacher: state.auth.is_teacher,
     unit: state.unit.unit.unit,
     loading: state.unit.loading,
     error: state.unit.error,
@@ -207,7 +217,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getUnit: (username, id) => dispatch(Unitactions.getUnit(username, id)),
+    getUnit: (unit_id, user_id) =>
+      dispatch(Unitactions.getUnit(unit_id, user_id)),
     resetQuiz: () => dispatch(Quizactions.handleStart()),
     resetLesson: () => dispatch(Lessonactions.lessonReset()),
   };

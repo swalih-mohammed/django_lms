@@ -29,7 +29,7 @@ const Certificate = (props) => {
         }}
       >
         <Image
-          style={{ height: "50%", width: 70, alignSelf: "center" }}
+          style={{ height: "30%", width: 70, alignSelf: "center" }}
           source={require("../../../assets/logo_nobg.png")}
         />
       </View>
@@ -47,7 +47,7 @@ const Certificate = (props) => {
             color: COLORS.primary,
           }}
         >
-          www.lakaters.com
+          www.laamacademy.com
         </Paragraph>
       </View>
       <View

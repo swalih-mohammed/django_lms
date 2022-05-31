@@ -23,7 +23,11 @@ const getUnitFail = (error) => {
 };
 
 export const getUnit = (unit_id, user_id) => {
-  console.log("fetching unit from redu", unit_id, user_id);
+  console.log(
+    "fetching unit from redux, unit id and user id",
+    unit_id,
+    user_id
+  );
   return (dispatch) => {
     dispatch(getUnitStart());
     axios

@@ -45,6 +45,7 @@ export function Speak(props) {
     isMounted.current = true;
     return () => {
       isMounted.current = false;
+      clearTimeout(setShowMessage);
     };
   }, [props.index]);
   const validate = (option) => {

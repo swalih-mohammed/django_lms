@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Linking } from "react-native";
 import { Card, ProgressBar, Paragraph, Title, Chip } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { COLORS, SIZES } from "../../Helpers/constants";
@@ -17,31 +16,47 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { LightSpeedInRight } from "react-native-reanimated";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as actions from "../../store/actions/course";
+import { getUser } from "../../store/actions/user";
+import { getCourse } from "../../store/actions/course";
 import UnitItem from "../unit/item";
-import CourseList from "./courseList";
 import Certificate from "./certificate";
+import EnrollNowBar from "../Utils/enrollNowbar";
 
 const CourseDetail = (props) => {
+  console.log("is teacher", props.is_teacher);
   const navigation = useNavigation();
   const { course, loading, error } = props;
-  const [order, setOrder] = useState(0);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [enrollBar, setEnrollBar] = useState(false);
 
   useEffect(() => {
-    props.getCourse(props.user_id);
     redirect();
-    // return () => {
-    //   console.log("course detail unmounting");
-    // };
+    setTimeout(makeEnrollVisible, 10000);
+    return () => {
+      clearTimeout(makeEnrollVisible);
+    };
   }, []);
+
+  const makeEnrollVisible = () => {
+    if (course) {
+      const NumberOfUnits = course.units ? course.units.length : 0;
+      if (!course.is_enrolled && NumberOfUnits > 0) {
+        console.log("im visible");
+        setEnrollBar(true);
+      }
+    }
+  };
 
   function redirect() {
     if (!props.token) {
       navigation.navigate("Get Started");
+    } else {
+      props.getUser(props.user_id);
+      props.getCourse(props.user_id);
     }
   }
 
   const progress = () => {
+    // console.log(course);
     if (course) {
       return course.completed_units + "/" + course.total_units;
     } else {
@@ -49,46 +64,21 @@ const CourseDetail = (props) => {
     }
   };
 
-  const progressBar = () => {
+  const progressCalc = () => {
     let progress = 0;
     if (course) {
       progress = course.completed_units / course.total_units;
     } else {
-      return (progress = 0);
+      return progress;
     }
     if (isNaN(progress)) {
-      return (progress = 0);
+      return progress;
     }
     return progress;
   };
-  const url = `https://wa.me/7207724191/?text=Please%20help%20me%20to%20join%20the%20course%20${course.language}%20${course.title}`;
+  // const url = `https://wa.me/7207724191/?text=Please%20help%20me%20to%20join%20the%20course%20${course.language}%20${course.title}`;
   const NumberOfUnits = course && course.units ? course.units.length : 0;
 
-  const courseFee = () => {
-    const courseFeeNum = Number(course.course_fee);
-    const discountNum = Number(course.discount);
-    const discount = discountNum * 100;
-    const AfterDiscount = courseFeeNum - courseFeeNum * discountNum;
-    return (
-      <View
-        style={{
-          backgroundColor: "#ffb703",
-          paddingHorizontal: 5,
-          paddingVertical: 3,
-          borderRadius: 3,
-          width: 150,
-        }}
-      >
-        <Text style={{ justifyContent: "space-around" }}>
-          <Paragraph style={{ textDecorationLine: "line-through" }}>
-            {courseFeeNum}
-          </Paragraph>
-          <Paragraph>{"  " + discount + "%off  "}</Paragraph>
-          <Paragraph>{AfterDiscount}</Paragraph>
-        </Text>
-      </View>
-    );
-  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
@@ -150,7 +140,7 @@ const CourseDetail = (props) => {
                         }}
                       >
                         <TouchableOpacity
-                          onPress={() => setModalVisible(true)}
+                          // onPress={() => setModalVisible(true)}
                           style={{
                             width: SIZES.width - 150,
                             height: 50,
@@ -218,7 +208,7 @@ const CourseDetail = (props) => {
                         }}
                       >
                         <ProgressBar
-                          progress={progressBar()}
+                          progress={progressCalc()}
                           color={COLORS.primary}
                         />
                       </View>
@@ -253,97 +243,62 @@ const CourseDetail = (props) => {
                   style={{
                     justifyContent: "center",
                     alignItems: "center",
+                    paddingHorizontal: 30,
+                    paddingVertical: 50,
                     // backgroundColor: "red",
                   }}
                 >
-                  <Paragraph>This course is not yet ready!</Paragraph>
+                  <Paragraph style={{ fontWeight: "bold", paddingBottom: 10 }}>
+                    This course is not yet ready!
+                  </Paragraph>
+                  <Paragraph>
+                    Go to account and change course or level to find a diffrent
+                    course
+                  </Paragraph>
                 </View>
               )}
-              <View
-                style={{
-                  // backgroundColor: "red",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+              {NumberOfUnits > 1 && (
                 <View
                   style={{
-                    minWidth: 50,
-                    marginHorizontal: 20,
-                    marginVertical: 20,
+                    // backgroundColor: "red",
                     justifyContent: "center",
                     alignItems: "center",
                   }}
                 >
-                  <Certificate
-                    student={props.username}
-                    name={course.title}
-                    certificate={course.certificate}
-                    progress={course.completed_units / course.total_units}
-                  />
+                  <View
+                    style={{
+                      minWidth: 50,
+                      marginHorizontal: 20,
+                      marginVertical: 20,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Certificate
+                      student={props.username}
+                      name={course.title}
+                      certificate={course.certificate}
+                      progress={course.completed_units / course.total_units}
+                    />
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
           ) : null}
         </Animated.View>
       </ScrollView>
-
-      <Card
-        style={{
-          width: SIZES.width,
-          height: 70,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "space-around",
-            alignItems: "center",
-            backgroundColor: "#ff9f1c",
-            // paddingTop: 20,
-            // alignSelf: "center",
-          }}
-        >
-          <MaterialCommunityIcons
-            name="whatsapp"
-            style={{
-              color: COLORS.primary,
-              fontSize: 50,
-            }}
-          />
-
-          {courseFee()}
-
-          <TouchableOpacity
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "#293241",
-              width: 100,
-              height: 30,
-              paddingHorizontal: 5,
-              paddingVertical: 3,
-              borderRadius: 5,
-            }}
-          >
-            <Paragraph
-              onPress={() => Linking.openURL(url)}
-              style={{ color: "white" }}
-            >
-              Enroll today
-            </Paragraph>
-          </TouchableOpacity>
-        </View>
-      </Card>
+      {/* <Text>{enrollBar ? "yes" : "NO"}</Text> */}
+      {!loading && course && enrollBar && (
+        <EnrollNowBar fee={course.course_fee} discount={course.discount} />
+      )}
     </SafeAreaView>
   );
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getCourse: (username, order) =>
-      dispatch(actions.getCourse(username, order)),
+    getCourse: (user_id) => dispatch(getCourse(user_id)),
+    getUser: (id) => dispatch(getUser(id)),
   };
 };
 
@@ -351,7 +306,9 @@ const mapStateToProps = (state) => {
   return {
     token: state.auth.token,
     user_id: state.auth.id,
+    is_teacher: state.auth.is_teacher,
     course: state.course.course,
+    is_enrolled: state.course.course.is_enrolled,
     loading: state.course.loading,
     error: state.course.error,
   };

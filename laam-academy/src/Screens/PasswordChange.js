@@ -125,7 +125,7 @@ const SignUpScreen = (props) => {
               paddingHorizontal: 25,
               paddingHorizontal: 15,
               justifyContent: "center",
-              alignItems: "center",
+              // alignItems: "center",
             }}
           >
             {error && (

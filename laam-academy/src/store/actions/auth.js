@@ -45,6 +45,7 @@ export const checkAuthTimeout = (expirationTime) => {
 };
 
 export const authLogin = (email, password) => {
+  console.log("loggin in");
   return (dispatch) => {
     dispatch(authStart());
     axios
@@ -53,12 +54,14 @@ export const authLogin = (email, password) => {
         password: password,
       })
       .then((res) => {
-        // console.log(res);
+        // console.log(res.data);
         const user = {
           token: res.data.key,
           id: res.data.user,
           email: res.data.email,
           name: res.data.name,
+          is_teacher: res.data.is_teacher,
+          is_test_user: res.data.is_test_user,
         };
 
         dispatch(authSuccess(user));

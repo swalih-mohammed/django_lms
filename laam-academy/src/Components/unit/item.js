@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import {
   TouchableOpacity,
   View,
@@ -6,6 +7,7 @@ import {
   StyleSheet,
   Image,
   Modal,
+  Linking,
 } from "react-native";
 import {
   Card,
@@ -13,6 +15,7 @@ import {
   ProgressBar,
   Paragraph,
   Button,
+  Divider,
 } from "react-native-paper";
 import Dash from "react-native-dash";
 import { useNavigation } from "@react-navigation/native";
@@ -24,9 +27,25 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { COLORS, SIZES } from "../../Helpers/constants";
 
 const UnitItem = (props) => {
+  // console.log(props.is_enrolled);
   const navigation = useNavigation();
   const { item } = props;
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [enrollmodalVisible, setEnrollModalVisible] = React.useState(false);
+
+  const goToUnitDetail = (is_enrolled, unit_id, unit_order) => {
+    // console.log("printing,", is_enrolled, unit_id, unit_order);
+    const id = unit_id ? unit_id : 1;
+    if (is_enrolled) {
+      navigation.navigate("Unit Details", { id: id });
+    } else {
+      if (unit_order < 2) {
+        navigation.navigate("Unit Details", { id: id });
+      } else {
+        setEnrollModalVisible(true);
+      }
+    }
+  };
 
   return (
     <>
@@ -113,8 +132,9 @@ const UnitItem = (props) => {
                 }}
               >
                 <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Unit Details", { id: item.id })
+                  onPress={
+                    () => goToUnitDetail(props.is_enrolled, item.id, item.order)
+                    // navigation.navigate("Unit Details", { id: item.id })
                   }
                 >
                   <View
@@ -339,6 +359,141 @@ const UnitItem = (props) => {
                   </Modal>
                 </View>
               )}
+
+              {/* enroll bar  */}
+              {enrollmodalVisible && (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Modal transparent={true}>
+                    <Animated.View
+                      entering={BounceInDown}
+                      style={{
+                        backgroundColor: "#edeec9",
+                        alignSelf: "center",
+                        width: SIZES.width - 80,
+                        marginVertical: 100,
+                        marginHorizontal: 10,
+                        flex: 1,
+                      }}
+                    >
+                      <TouchableOpacity
+                        style={{ alignSelf: "flex-end" }}
+                        onPress={() => setEnrollModalVisible(false)}
+                      >
+                        <View
+                          style={{
+                            width: 45,
+                            height: 45,
+                            borderRadius: 20 / 2,
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            name="close"
+                            style={{
+                              color: COLORS.enactive,
+                              fontSize: 35,
+                            }}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          // backgroundColor: "red",
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: 130,
+                            height: 30,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            backgroundColor: "red",
+                            borderRadius: 5,
+                          }}
+                        >
+                          <Paragraph
+                            style={{ color: "white", fontWeight: "bold" }}
+                          >
+                            Join Today!
+                          </Paragraph>
+                        </View>
+                      </View>
+
+                      <View
+                        style={{
+                          flex: 3,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          // backgroundColor: "red",
+                          paddingHorizontal: 30,
+                        }}
+                      >
+                        <Paragraph>
+                          Take your language skill to the next level with Laam
+                          Academy.
+                        </Paragraph>
+                      </View>
+
+                      <View
+                        style={{
+                          flex: 5,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginTop: 22,
+                          // backgroundColor: "red",
+                        }}
+                      >
+                        <Paragraph style={styles.SubTitle}>
+                          Contact us
+                        </Paragraph>
+                        <View style={styles.Row}>
+                          <TouchableOpacity
+                            onPress={() => Linking.openURL(url)}
+                          >
+                            <MaterialCommunityIcons
+                              name="whatsapp"
+                              style={{
+                                color: COLORS.primary,
+                                fontSize: 30,
+                              }}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                        <View style={styles.Row}>
+                          <TouchableOpacity
+                            onPress={() =>
+                              Linking.openURL(`mailto:support@laamacademy.com`)
+                            }
+                            title="support@laamacademy.com"
+                          >
+                            <Paragraph style={{ color: COLORS.primary }}>
+                              support@laamacademy.com
+                            </Paragraph>
+                          </TouchableOpacity>
+                        </View>
+                        <View style={styles.Row}>
+                          <Paragraph>Call</Paragraph>
+                          <TouchableOpacity
+                            onPress={() => Linking.openURL(`tel:${7207724191}`)}
+                          >
+                            <Paragraph>720-772-4191</Paragraph>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </Animated.View>
+                  </Modal>
+                </View>
+              )}
             </View>
           </View>
         </Animated.View>
@@ -348,21 +503,16 @@ const UnitItem = (props) => {
 };
 const styles = StyleSheet.create({
   mainContainer: {
-    // margin: 8,
-    // backgroundColor: "red",
     flex: 1,
   },
-
   container: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "center",
-    // backgroundColor: "red",
   },
   RightContainer: {
     flex: 2,
     justifyContent: "center",
-
     marginRight: 10,
     marginLeft: 35,
   },
@@ -376,6 +526,35 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
+  Row: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    minHeight: 55,
+  },
+
+  SubTitle: {
+    fontWeight: "bold",
+    fontSize: 16,
+    paddingVertical: 20,
+    textTransform: "uppercase",
+  },
 });
 
-export default UnitItem;
+// export default UnitItem;
+
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+    is_enrolled: state.course.course.is_enrolled,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    // getUnit: (username, id) => dispatch(Unitactions.getUnit(username, id)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UnitItem);

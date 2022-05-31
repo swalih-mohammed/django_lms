@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 import { handleNext, handleStart } from "../../store/actions/quiz";
+import { getUnit } from "../../store/actions/unit";
+import { getCourse } from "../../store/actions/course";
 import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import { localhost } from "../../Helpers/urls";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 // import nlp from "compromise";
 import ProgressBar from "./Progress";
 import PhotoOption from "./MultipleChoice/PhotoOption";
@@ -16,7 +19,7 @@ import Writing from "./Write/write";
 import FillInBlank from "./MultipleChoice/FillInBlank";
 import ReadingComprehension from "./Comprehension/reading";
 import ListeningComprehension from "./Comprehension/listening";
-import { View, StatusBar } from "react-native";
+import { View, StatusBar, Text } from "react-native";
 import { COLORS, SIZES } from "../../Helpers/constants";
 import ScoreModal from "./model";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,9 +27,10 @@ import Dialogue from "./Dialogue/index";
 import Email from "./Email/email";
 import Passage from "./Passage/passage";
 import Conversation from "./Conversation/FillInBlank";
+import ReportBug from "../Utils/reportBug";
 
 const Questions = (props) => {
-  console.log();
+  console.log(props.quiz.id);
   const navigation = useNavigation();
   const sound = React.useRef(new Audio.Sound());
   const isMounted = React.useRef(null);
@@ -150,8 +154,8 @@ const Questions = (props) => {
         console.log("not lesson based");
         setLoading(true);
         const data = {
-          username: props.username,
-          quizId: props.quiz.id,
+          user_id: props.user_id,
+          quiz_id: props.quiz.id,
           score: props.score,
         };
         console.log("data in unit quiz", data);
@@ -172,13 +176,15 @@ const Questions = (props) => {
     } catch (error) {
       console.log("error in catch while complet lesson/ quiz", error);
     }
-
     redirect();
   };
 
   const redirect = () => {
     console.log("porps.unit", props.lesson);
     if (props.unit || props.lesson) {
+      // quiz complted so updating unit and course to reflect changes
+      props.getUnit(props.unit, props.user_id);
+      props.getCourse(props.user_id);
       navigation.navigate("Unit Details", {
         id: props.unit,
         quiz_completed: true,
@@ -322,6 +328,14 @@ const Questions = (props) => {
         allQuestionsLength={allQuestions.length}
       />
       <View style={{ flex: 1 }}>
+        {props.is_teacher && (
+          <ReportBug
+            unit={props.quiz.unit}
+            quiz={props.quiz.id}
+            text={"qustion order_" + allQuestions[props.index].order + "_"}
+          />
+        )}
+
         {allQuestions[props.index].category === "TEXT_OPTIONS" && (
           <TextChoices
             numberOfQuestions={allQuestions.length - 1}
@@ -338,7 +352,6 @@ const Questions = (props) => {
             photo={allQuestions[props.index].photo}
           />
         )}
-
         {allQuestions[props.index].category === "PHOTO_OPTIONS" && (
           <PhotoOption
             numberOfQuestions={allQuestions.length - 1}
@@ -355,7 +368,6 @@ const Questions = (props) => {
             UnloadSound={UnloadSound}
           />
         )}
-
         {allQuestions[props.index].category === "DRAG" && (
           <DragAndDrop
             numberOfQuestions={allQuestions.length - 1}
@@ -512,7 +524,6 @@ const Questions = (props) => {
             processedQuestions={processedQuestions()}
           />
         )}
-
         {allQuestions[props.index].category === "DIALOGUE" && (
           <Dialogue
             numberOfQuestions={allQuestions.length - 1}
@@ -534,7 +545,6 @@ const Questions = (props) => {
             quizAudio={props.quizAudio}
           />
         )}
-
         {allQuestions[props.index].category === "WRITE" && (
           <Writing
             numberOfQuestions={allQuestions.length - 1}
@@ -593,12 +603,13 @@ const mapStateToProps = (state) => {
   return {
     token: state.auth.token,
     username: state.auth.username,
+    user_id: state.auth.id,
+    is_teacher: state.auth.is_teacher,
     index: state.quiz.index,
     score: state.quiz.score,
     lesson: state.quiz.quiz.lesson,
     unit: state.quiz.quiz.unit,
     quiz: state.quiz.quiz,
-    // is_completed: state.quiz.quiz.i,
     showScoreModal: state.quiz.showScoreModal,
   };
 };
@@ -606,6 +617,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     handleNext: (data) => dispatch(handleNext(data)),
     handleStart: (data) => dispatch(handleStart(data)),
+    getUnit: (unit_id, user_id) => dispatch(getUnit(unit_id, user_id)),
+    getCourse: (user_id) => dispatch(getCourse(user_id)),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Questions);

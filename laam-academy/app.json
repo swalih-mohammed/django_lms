@@ -23,8 +23,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
+        "backgroundColor": "#12F952"
+      },
+      "package": "com.sibiyan.laamacademy"
     },
     "web": {
       "favicon": "./assets/favicon.png"
