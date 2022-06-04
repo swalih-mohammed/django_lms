@@ -21,6 +21,7 @@ const GetStarted = (props) => {
   useEffect(() => {
     if (animation.current) {
       animation.current.play(30, 200);
+      pushToHome();
     }
   }, []);
 

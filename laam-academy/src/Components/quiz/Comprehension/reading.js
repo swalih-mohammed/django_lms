@@ -14,7 +14,7 @@ import Animated, { LightSpeedInRight } from "react-native-reanimated";
 import { COLORS, SIZES } from "../../../Helpers/constants";
 import Icon from "react-native-vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
-import * as Haptics from "expo-haptics";
+// import * as Haptics from "expo-haptics";
 import { Audio } from "expo-av";
 
 import { MARGIN_TOP } from "../DaragAndDrop/Layout";

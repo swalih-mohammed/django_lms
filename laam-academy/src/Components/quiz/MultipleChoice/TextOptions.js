@@ -17,7 +17,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import { handleNext, handleValidate } from "../../../store/actions/quiz";
 import LottieView from "lottie-react-native";
 import Audio from "../../../Helpers/PlayerWithoutControl";
-import * as Haptics from "expo-haptics";
+// import * as Haptics from "expo-haptics";
 
 // import console = require("console");
 

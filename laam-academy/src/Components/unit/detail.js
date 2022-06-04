@@ -24,7 +24,7 @@ import ReportBug from "../Utils/reportBug";
 
 const UnitDetail = (props) => {
   const { unit, loading, error } = props;
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
 
   useEffect(() => {
     // console.log("is teacher", props.is_teacher);
@@ -34,9 +34,13 @@ const UnitDetail = (props) => {
   }, []);
 
   const getUnitDetails = () => {
-    const unit_id = props.route.params.id ? props.route.params.id : 1;
-    const user_id = props.user_id;
-    props.getUnit(unit_id, user_id);
+    if (props.token) {
+      const unit_id = props.route.params.id ? props.route.params.id : 1;
+      const user_id = props.user_id;
+      props.getUnit(unit_id, user_id);
+    } else {
+      navigation.navigate("Get Started");
+    }
   };
 
   useFocusEffect(

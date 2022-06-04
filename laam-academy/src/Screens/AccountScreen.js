@@ -13,10 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import * as authActions from "../store/actions/auth";
 import * as courseListActions from "../store/actions/courseList";
 import * as userActions from "../store/actions/user";
-import Animated, {
-  LightSpeedInRight,
-  SlideInRight,
-} from "react-native-reanimated";
+import { useFocusEffect } from "@react-navigation/native";
+import Animated, { SlideInRight } from "react-native-reanimated";
 import { COLORS, SIZES } from "../Helpers/constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -32,8 +30,16 @@ const Account = (props) => {
     props.getUser(props.id);
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("usefocus firing ");
+      pushToHome();
+    }, [])
+  );
+
   function pushToHome() {
     if (!props.token) {
+      console.log("pusing to home ");
       navigation.navigate("Get Started");
     }
   }
@@ -201,6 +207,20 @@ const Account = (props) => {
               <Divider />
             </>
           ) : null}
+
+          <View style={styles.Row}>
+            <Paragraph>Privacy policy</Paragraph>
+            {/* <Paragraph> {props.is_teacher ? "yes" : "no"}</Paragraph> */}
+            <TouchableOpacity onPress={() => navigation.navigate("Privacy")}>
+              <MaterialCommunityIcons
+                name="chevron-right"
+                style={{
+                  color: COLORS.primary,
+                  fontSize: 30,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.Row}>
             <Button

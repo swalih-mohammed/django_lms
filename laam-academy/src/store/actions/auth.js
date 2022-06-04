@@ -136,7 +136,7 @@ export const authResetPassword = (email) => {
   return (dispatch) => {
     // dispatch(authStart());
     axios
-      .post(`${localhost}/rest-auth/password/reset/`, {
+      .post(`${localhost}/dj-rest-auth/password/reset/`, {
         email: email,
       })
       .then((res) => {

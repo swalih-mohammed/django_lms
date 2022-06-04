@@ -16,7 +16,7 @@ import { COLORS, SIZES } from "../../../Helpers/constants";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
-import * as Haptics from "expo-haptics";
+// import * as Haptics from "expo-haptics";
 import { Audio } from "expo-av";
 import { MARGIN_TOP } from "../DaragAndDrop/Layout";
 // import console = require("console");

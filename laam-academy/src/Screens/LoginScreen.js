@@ -16,43 +16,55 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, SIZES } from "../Helpers/constants";
 import { Card, Paragraph } from "react-native-paper";
 import Animated, { LightSpeedInRight } from "react-native-reanimated";
-import * as actions from "../store/actions/auth";
+import { authLogin, authResetPassword, logout } from "../store/actions/auth";
+import { getCourse } from "../store/actions/course";
 import {
   emailValidator,
   passwordValidator,
-  usernameValidator,
 } from "../Components/Utils/Utilities";
+import { Button } from "react-native-paper";
 
 const LoginScreen = (props) => {
   const navigation = useNavigation();
+  const [email, setEmail] = useState({ value: "", error: "" });
+  const [password, setPassword] = useState({ value: "", error: "" });
+
   useEffect(() => {
     if (props.token) {
-      navigation.navigate("Home");
+      navigation.navigate("Courses");
     }
   }, [props.token]);
-  const [email, setEmail] = useState({ value: "", error: "" });
-  const [username, setUsername] = useState({ value: "", error: "" });
-  const [password, setPassword] = useState({ value: "", error: "" });
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const _onLoginPressed = () => {
     const emailError = emailValidator(email.value);
-    // const usernameError = usernameValidator(username.value);
     const passwordError = passwordValidator(password.value);
     if (emailError || passwordError) {
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });
     } else {
-      // login(email.value, password.value);
-      props.onAuth(email.value, password.value);
+      props.authLogin(email.value, password.value);
+      getCourse();
+      redirect();
+    }
+  };
+
+  const getCourse = () => {
+    if (props.user_id) {
+      console.log("getting course after login");
+      props.getCourse(props.user_id);
+    }
+  };
+  const redirect = () => {
+    console.log("redirecting after login");
+    if (props.token) {
+      navigation.navigate("Courses");
     }
   };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
-      {props.loading ? (
+      {props.loading || props.courseLoading ? (
         <View
           style={{
             zIndex: -1,
@@ -70,11 +82,11 @@ const LoginScreen = (props) => {
         </View>
       ) : (
         <Animated.View entering={LightSpeedInRight} style={styles.container}>
-          {error && (
+          {props.error && (
             <Card
               style={{
                 width: SIZES.width * 0.9,
-                height: 50,
+                height: 70,
               }}
             >
               <View
@@ -93,7 +105,7 @@ const LoginScreen = (props) => {
           <Card
             style={{
               width: SIZES.width * 0.9,
-              height: SIZES.height * 0.6,
+              height: SIZES.height * 0.7,
               paddingHorizontal: 25,
               paddingHorizontal: 15,
             }}
@@ -111,6 +123,7 @@ const LoginScreen = (props) => {
               textContentType="emailAddress"
               keyboardType="email-address"
               caretHidden={false}
+              editable
             />
             <TextInput
               label="Password"
@@ -121,17 +134,17 @@ const LoginScreen = (props) => {
               errorText={password.error}
               secureTextEntry
             />
-            <View style={styles.forgotPassword}>
+            {/* <View style={styles.forgotPassword}>
               <TouchableOpacity
-              // onPress={() => navigation.navigate("ForgotPasswordScreen")}
+                onPress={() => navigation.navigate("PasswordReset")}
               >
                 <Text style={{ color: COLORS.primary }}>
                   Forgot your password?
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
             <TouchableOpacity
-              disabled={loading}
+              disabled={props.loading}
               style={{
                 width: "100%",
                 height: 42,
@@ -148,7 +161,7 @@ const LoginScreen = (props) => {
               </Paragraph>
             </TouchableOpacity>
             <TouchableOpacity
-              disabled={loading}
+              disabled={props.loading}
               style={{
                 width: "100%",
                 height: 42,
@@ -165,6 +178,24 @@ const LoginScreen = (props) => {
                 SIGN UP
               </Paragraph>
             </TouchableOpacity>
+            <View
+              style={{
+                justifyContent: "space-around",
+                alignItems: "center",
+                // backgroundColor: "red",
+                alignSelf: "center",
+                paddingTop: 40,
+              }}
+            >
+              <Paragraph
+                style={{ fontSize: 12, textAlign: "center", paddingBottom: 20 }}
+              >
+                By logging in, you are agreeing to the below privacy policy
+              </Paragraph>
+              <TouchableOpacity onPress={() => navigation.navigate("Privacy")}>
+                <Text style={{ color: COLORS.primary }}>Privacy policy</Text>
+              </TouchableOpacity>
+            </View>
           </Card>
         </Animated.View>
       )}
@@ -196,18 +227,19 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     token: state.auth.token,
+    user_id: state.auth.id,
+    user_email: state.auth.email,
     loading: state.auth.loading,
+    courseLoading: state.course.loading,
     error: state.auth.error,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onAuth: (username, password) =>
-      dispatch(actions.authLogin(username, password)),
-    authResetPassword: (username) =>
-      dispatch(actions.authResetPassword(username)),
-    logOut: () => dispatch(actions.logout()),
+    authLogin: (username, password) => dispatch(authLogin(username, password)),
+    logOut: () => dispatch(logout()),
+    getCourse: (user_id) => dispatch(getCourse(user_id)),
   };
 };
 

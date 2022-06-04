@@ -1,12 +1,13 @@
-import { LogBox } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import { Provider as StoreProvider } from "react-redux";
 import { loadAsync } from "expo-font";
+import { LogBox } from "react-native";
 // import { AppLoading } from "expo";
 import { COLORS } from "./src/Helpers/constants";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+
 import { store, persistor } from "./src/store/index";
 import { PersistGate } from "redux-persist/integration/react";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -17,6 +18,8 @@ import Account from "./src/Screens/AccountScreen";
 import LoginScreen from "./src/Screens/LoginScreen";
 import SignUp from "./src/Screens/SignUpScreen";
 import PasswordChange from "./src/Screens/PasswordChange";
+import PasswordReset from "./src/Screens/PasswordResetScreen";
+import Privacy from "./src/Screens/Privacy";
 import GetStartedScreen from "./src/Screens/getStarted";
 import TestDetail from "./src/Components/quiz/list";
 import ConversationDetails from "./src/Components/conversations/detail";
@@ -29,9 +32,9 @@ const Tabs = createMaterialBottomTabNavigator();
 import HomeScreen from "./src/Components/course/detail";
 import CourseLevelList from "./src/Components/course/courseList";
 import CourseCetegoryList from "./src/Screens/CourseCategories";
+import React from "react";
 
 import * as Sentry from "sentry-expo";
-import React from "react";
 
 Sentry.init({
   dsn: "https://c7a1462cb3bb48fb82490d0bab0b811c@o1257480.ingest.sentry.io/6429229",
@@ -58,24 +61,6 @@ async function loadState(setState) {
   });
 }
 
-const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    notification: "red",
-    red: "red",
-    yellow: "#3498db",
-    green: "#f1c40f",
-    primary: "#14a800",
-    secondary: "#414757",
-    error: "#f13a59",
-    white: "#FFFFFF",
-    black: "#171717",
-    offWhite: "#F8F0E3",
-    gray: "#343a40",
-  },
-};
-
 //end warning for viewprotypes
 const ignoreWarns = [
   "Setting a timer for a long period of time",
@@ -93,6 +78,24 @@ console.warn = (...arg) => {
 };
 
 LogBox.ignoreLogs(ignoreWarns);
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    notification: "red",
+    red: "red",
+    yellow: "#3498db",
+    green: "#f1c40f",
+    primary: "#14a800",
+    secondary: "#414757",
+    error: "#f13a59",
+    white: "#FFFFFF",
+    black: "#171717",
+    offWhite: "#F8F0E3",
+    gray: "#343a40",
+  },
+};
 
 export const TabScreens = () => (
   <Tabs.Navigator
@@ -131,6 +134,13 @@ function App() {
             <NavigationContainer>
               <Stack.Navigator>
                 <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name="Get Started"
+                  component={GetStartedScreen}
+                />
+                <Stack.Screen
                   name="Courses"
                   component={TabScreens}
                   options={{
@@ -150,14 +160,6 @@ function App() {
                   options={{
                     headerShown: false,
                   }}
-                />
-
-                <Stack.Screen
-                  options={{
-                    headerShown: false,
-                  }}
-                  name="Get Started"
-                  component={GetStartedScreen}
                 />
 
                 <Stack.Screen
@@ -209,7 +211,20 @@ function App() {
                   name="PasswordChange"
                   component={PasswordChange}
                 />
-
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name="PasswordReset"
+                  component={PasswordReset}
+                />
+                <Stack.Screen
+                  options={{
+                    headerShown: false,
+                  }}
+                  name="Privacy"
+                  component={Privacy}
+                />
                 <Stack.Screen
                   options={{
                     headerShown: false,

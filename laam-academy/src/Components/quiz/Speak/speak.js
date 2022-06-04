@@ -17,7 +17,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Icon from "react-native-vector-icons/AntDesign";
 import LottieView from "lottie-react-native";
 import * as FileSystem from "expo-file-system";
-import * as Haptics from "expo-haptics";
+// import * as Haptics from "expo-haptics";
 
 export function Speak(props) {
   const animation = React.useRef(null);

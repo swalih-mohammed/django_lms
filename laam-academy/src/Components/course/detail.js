@@ -15,7 +15,7 @@ import { COLORS, SIZES } from "../../Helpers/constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { LightSpeedInRight } from "react-native-reanimated";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import * as actions from "../../store/actions/course";
+import { useFocusEffect } from "@react-navigation/native";
 import { getUser } from "../../store/actions/user";
 import { getCourse } from "../../store/actions/course";
 import UnitItem from "../unit/item";
@@ -48,12 +48,23 @@ const CourseDetail = (props) => {
 
   function redirect() {
     if (!props.token) {
-      navigation.navigate("Get Started");
+      navigation.navigate("Login");
     } else {
-      props.getUser(props.user_id);
-      props.getCourse(props.user_id);
+      if (props.user_id) {
+        // props.getUser(props.user_id);
+        props.getCourse(props.user_id);
+      }
     }
   }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (props.user_id && !props.course) {
+        console.log("no course firing in usefoucs");
+        props.getCourse(props.user_id);
+      }
+    }, [])
+  );
 
   const progress = () => {
     // console.log(course);
@@ -191,40 +202,41 @@ const CourseDetail = (props) => {
                   <View style={{ flex: 1, paddingLeft: 10 }}>
                     <Paragraph>{course.description}</Paragraph>
                   </View>
-
-                  <View style={{ flex: 0.6 }}>
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: "row",
-                        marginHorizontal: 10,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flex: 5,
-                          // backgroundColor: "green",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <ProgressBar
-                          progress={progressCalc()}
-                          color={COLORS.primary}
-                        />
-                      </View>
-
+                  {NumberOfUnits > 0 && (
+                    <View style={{ flex: 0.6 }}>
                       <View
                         style={{
                           flex: 1,
-                          // backgroundColor: "red",
-                          justifyContent: "center",
-                          alignItems: "center",
+                          flexDirection: "row",
+                          marginHorizontal: 10,
                         }}
                       >
-                        <Paragraph>{progress()}</Paragraph>
+                        <View
+                          style={{
+                            flex: 5,
+                            // backgroundColor: "green",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <ProgressBar
+                            progress={progressCalc()}
+                            color={COLORS.primary}
+                          />
+                        </View>
+
+                        <View
+                          style={{
+                            flex: 1,
+                            // backgroundColor: "red",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Paragraph>{progress()}</Paragraph>
+                        </View>
                       </View>
                     </View>
-                  </View>
+                  )}
                 </View>
               </Card>
 
